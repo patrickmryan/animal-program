@@ -1,9 +1,14 @@
 class AnimalGame
 
   def initialize_game
-    @top_node = Node(nil,nil,nil)          # very top node starts with nothing
-    animal_node = @top_node.newLeftNode()  # left node contains first actual question
-    animal_node.animal="cat";
+    @top_node = BinaryNode.new(nil,nil,nil)          # very top node starts with nothing
+
+    #animal_node = @top_node.newLeftNode()  # left node contains first actual question
+    #animal_node = AnimalNode.new("cat");
+    #@topNode.left = animal_node
+    #animal_node.up = @topNode
+
+    @top_node.setLeftNode(AnimalNode.new("cat"))
     
   end
   
@@ -26,16 +31,17 @@ _END_
   def play_game
     self.welcome()
     self.initialize_game()
-    self.play_game_from_node(self.top_node())
+    self.play_game_from_node(self.top_node().getLeftNode())
     
   end
 
   def promptForYesNo
     loop do
+      print " > "
       answer = gets
       if (answer =~ /^\s*y/i)
         return true
-      else if (answer =~ /^\s*n/i)
+      elsif (answer =~ /^\s*n/i)
         return false
       end
       puts "please answer yes or no"
@@ -43,11 +49,11 @@ _END_
   end
   
   
-  def play_game_from_node(this_node)  # recursive method
+  def play_game_from_node(current_node)  # recursive method
   
 
     puts current_node.question
-    print " > "
+   
     answeredYes = self.promptForYesNo()
     if answeredYes
       if (current_node.isLeaf())  # yea!  we're done!
@@ -66,10 +72,12 @@ _END_
   end
   
   
-#  def get_new_question_for_node(lastNode)
+  def get_new_question_for_node(lastNode)
     # need to prompt for a new question and then edit the tree
+    puts "time to get another question"
+    exit
     
- # end
+  end
   
 end
 
@@ -89,17 +97,35 @@ class BinaryNode
     return BinaryNode.new(self,nil,nil)
   end
 
-  def newLeftNode
-    node = self.reproduce() 
-    @left = node
+  # def newLeftNode
+  #   node = self.reproduce() 
+  #   @left = node
+  # end
+
+  # def newRightNode
+  #   node = self.reproduce()
+  #   @right = node
+  # end
+
+  def getLeftNode ; return @left ; end
+  def getRightNode ; return @right ; end
+  def getUpNode ; reteurn @up ; end
+
+  def setLeftNode(aNode)
+    aNode.setUpNode(self)
+    @left = aNode
   end
 
-  def newRighNode
-    node = self.reproduce()
-    @right = node
+  def setRightNode(aNode)
+    aNode.setUpNode(self)
+    @right = aNode
   end
-  
-  
+
+  def setUpNode(aNode)
+    @up = aNode
+  end
+
+
   attr_reader :left
   attr_reader :right
   attr_reader :up  # parent node
@@ -176,7 +202,10 @@ class AnimalNode < BinaryNode
 end
 
 
-#node = AnimalNode.new("elephant")
-#puts node.question()
+game = AnimalGame.new()
+game.play_game()
+
+
+
 
 
