@@ -5,12 +5,11 @@ class AnimalGame
   end
   
   def initialize_game
-    @top_node = BinaryNode.new(nil)          # very top node starts with nothing
+    # very top node starts with nothing
+    @top_node = BinaryNode.new(nil)
 
     # left node contains first actual question
-
-    node = AnimalNode.new("cat")
-    @top_node.setLeftNode(node)
+    @top_node.setLeftNode(AnimalNode.new("cat"))
 
   end
   
@@ -53,19 +52,19 @@ _END_
   
   def play_game_from_node(parent_node,current_node)  # recursive method
 
-
+    # display the question at this node
     puts current_node.getText()
    
     answeredYes = self.promptForYesNo()
     if answeredYes
       if (current_node.isLeaf())  # yea!  we're done!
-        puts "You found the animal you were seeking"
+        puts "I guessed correctly. I must be very smart."
       else
-        aNode = current_node.getYes()
-        if (!aNode)
-          puts "error - current_node = " + current_node.printString + ", yes node is nil"
-          exit
-        end
+        # aNode = current_node.getYes()
+        # if (!aNode)
+        #   puts "error - current_node = " + current_node.printString + ", yes node is nil"
+        #   exit
+        # end
         
         self.play_game_from_node(current_node,current_node.getYes())
 
@@ -100,6 +99,7 @@ _END_
     print newAnimalNode.articleAndName() + ".\n"
     puts "The question should be TRUE for one animal and FALSE for the other."
     puts "After you enter the question, I will ask for which animal the question is true."
+    print "> "
 
     q = gets.chomp()
     newQuestionNode = QuestionNode.new(q)
@@ -274,7 +274,6 @@ class AnimalNode < BinaryNode
   
   def yes ; return nil; end
   def no ; return nil; end
-#  def isLeaf ; return true; end
 
   def printString
     return "AnimalNode: #{animal}"
