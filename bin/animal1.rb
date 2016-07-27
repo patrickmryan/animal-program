@@ -32,7 +32,8 @@ _END_
   end
 
   def play_game
-    self.play_game_from_node(self.getTopNode(),self.getTopNode().getLeftNode())
+    top = self.getTopNode()
+    self.play_game_from_node(top,top.getLeftNode())
     
   end
 
@@ -117,13 +118,11 @@ _END_
 
     # splice the two new nodes into the tree
     
-    if (parent.getYes() == lastAnimalNode)      # got here on a "yes"
+    if (parent.getYes() == lastAnimalNode)    # got here on a "yes"
       parent.setYes(newQuestionNode)
-      newQuestionNode.setNo(lastAnimalNode)
       
     elsif (parent.getNo() == lastAnimalNode)  # got here on a "no"
       parent.setNo(newQuestionNode)
-      newQuestionNode.setYes(lastAnimalNode)
       
     else
       put "shouldn't get here"
@@ -154,10 +153,6 @@ class BinaryNode
 
   end
 
-  def isLeaf  # at a leaf node if left and right are nil
-    return (! @left || @right )
-  end
-
   def getLeftNode ; return @left ; end
   def getRightNode ; return @right ; end
   def isNull ; return false ; end
@@ -167,6 +162,9 @@ class BinaryNode
   def setYes(node) ; self.setLeftNode(node) ; end
   def setNo(node) ; self.setRightNode(node) ; end
 
+  def isLeaf
+    return !(@left || @right)
+  end
 
   def setLeftNode(aNode)
     @left = aNode
@@ -186,12 +184,34 @@ class BinaryNode
   
   def recursePrintFromLevel(spaces)
     spaces.times { print " " }
-    puts self.printString()
-    if (self.getLeftNode())
-      self.getLeftNode.recursePrintFromLevel(spaces+1)
-    end
-    if (self.getRightNode())
-      self.getRightNode.recursePrintFromLevel(spaces+1)
+    print self.printString()
+
+    if (self.isLeaf())
+      print "\n"
+    else
+      print " { yes - "
+      leftNode = self.getLeftNode()
+      rightNode = self.getRightNode()
+      
+      if (leftNode)
+        print leftNode.printString()
+      else
+        print "nil"
+      end
+      print ", no - "
+      if (rightNode)
+        print rightNode.printString()
+      else
+        print "nil"
+      end
+      print " }\n"
+      
+      if (leftNode)
+        leftNode.recursePrintFromLevel(spaces+1)
+      end     
+      if (rightNode)
+        rightNode.recursePrintFromLevel(spaces+1)
+      end
     end
   end
   
@@ -213,9 +233,9 @@ class QuestionNode < BinaryNode
     return q
   end
 
-  #def isLeaf
-  #  return false
-  #end
+#  def isLeaf
+#    return false
+#  end
 
   def printString
     return "QuestionNode: #{question}"
@@ -254,7 +274,7 @@ class AnimalNode < BinaryNode
   
   def yes ; return nil; end
   def no ; return nil; end
-  #def isLeaf ; return true; end
+#  def isLeaf ; return true; end
 
   def printString
     return "AnimalNode: #{animal}"
@@ -277,6 +297,3 @@ loop do
     exit
   end
 end
-
-
-
