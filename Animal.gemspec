@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 Gem::Specification.new do |spec|
   spec.name          = "Animal"
   spec.version       = '1.0'
-  spec.authors       = ["Patrick M. Rya"]
+  spec.authors       = ["Patrick M. Ryan"]
   spec.email         = ["pmryan@us.ibm.com"]
   spec.summary       = %q{Animal program}
   spec.description   = %q{Animal program. Demonstrate binary trees.}

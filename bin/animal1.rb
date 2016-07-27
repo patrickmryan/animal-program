@@ -154,6 +154,10 @@ class BinaryNode
 
   end
 
+  def isLeaf  # at a leaf node if left and right are nil
+    return (! @left || @right )
+  end
+
   def getLeftNode ; return @left ; end
   def getRightNode ; return @right ; end
   def isNull ; return false ; end
@@ -209,9 +213,9 @@ class QuestionNode < BinaryNode
     return q
   end
 
-  def isLeaf
-    return false
-  end
+  #def isLeaf
+  #  return false
+  #end
 
   def printString
     return "QuestionNode: #{question}"
@@ -250,7 +254,7 @@ class AnimalNode < BinaryNode
   
   def yes ; return nil; end
   def no ; return nil; end
-  def isLeaf ; return true; end
+  #def isLeaf ; return true; end
 
   def printString
     return "AnimalNode: #{animal}"
