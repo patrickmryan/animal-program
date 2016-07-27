@@ -7,20 +7,11 @@ class AnimalGame
   def initialize_game
     @top_node = BinaryNode.new(nil)          # very top node starts with nothing
 
-    #animal_node = @top_node.newLeftNode()  # left node contains first actual question
-    #animal_node = AnimalNode.new("cat");
-    #@topNode.left = animal_node
-    #animal_node.up = @topNode
+    # left node contains first actual question
 
     node = AnimalNode.new("cat")
     @top_node.setLeftNode(node)
-    node.setUpNode(@top_node)
 
-    #puts "after initialization"
-    #puts "------"
-    #@top_node.recursePrint()
-    #puts "------"
-    
   end
   
   attr_reader :top_node
@@ -40,13 +31,8 @@ _END_
     
   end
 
-
-  
-
   def play_game
-    #self.welcome()
-    #self.initialize_game()
-    self.play_game_from_node(self.getTopNode().getLeftNode())
+    self.play_game_from_node(self.getTopNode(),self.getTopNode().getLeftNode())
     
   end
 
@@ -64,14 +50,8 @@ _END_
   end
   
   
-  def play_game_from_node(current_node)  # recursive method
+  def play_game_from_node(parent_node,current_node)  # recursive method
 
-    if (current_node.nil?)
-      puts "current_node isNil"
-      exit
-    end
-    
-    #puts "In node " + current_node.printString() + ", parent is " + current_node.getUpNode.printString()
 
     puts current_node.getText()
    
@@ -86,33 +66,27 @@ _END_
           exit
         end
         
-        puts "playing game from " + aNode.printString
-        self.play_game_from_node(aNode)
+        self.play_game_from_node(current_node,current_node.getYes())
+
+        
       end
     else  # player answered no to question
       if (!current_node.isLeaf()) # not at a leaf means we're at a branch
-        self.play_game_from_node(current_node.getNo())
+        self.play_game_from_node(current_node,current_node.getNo())
+        
       else  # uh-oh.  got to the end of the questions and did not find the animal
-        self.get_new_question_for_node(current_node)
+        self.get_new_question_for_node(parent_node,current_node)
+
       end
     end  
       
   end
   
   
-  def get_new_question_for_node(lastAnimalNode)
+  def get_new_question_for_node(parent,lastAnimalNode)
     # need to prompt for a new question and then edit the tree
     # we'll end up with two new nodes, a question node and an animal node
-
-    # puts "tree BEFORE updates"
-    # puts "------ topNode"
-    # self.getTopNode.recursePrint()
-    # puts "------ lastAnimalNode"
-    # puts lastAnimalNode.getText()
-    # puts "------ lastAnimalNode.up"
-    # puts lastAnimalNode.getUpNode.getText()
-    # puts "------"
-    
+   
     puts "I don't know what animal you're thinking of. Help me update my database."
     print "Please type in the name of the animal > "
 
@@ -129,7 +103,7 @@ _END_
     q = gets.chomp()
     newQuestionNode = QuestionNode.new(q)
 
-    print "Is this question true for " + newAnimalNode.articleAndName() + "?"
+    print "\nIs this question true for " + newAnimalNode.articleAndName() + "?"
     
     if (self.promptForYesNo())
       # true means question is true for the new animal
@@ -140,49 +114,21 @@ _END_
       newQuestionNode.setYes(lastAnimalNode)
       newQuestionNode.setNo(newAnimalNode)
     end
-    newAnimalNode.setUpNode(newQuestionNode)
-
-    # put the new nodes into the tree
-    parent = lastAnimalNode.getUpNode()
-    
-    # puts "about to insert new nodes, parent node is " + parent.printString()
-
-    # print "   left/yes "
-    # if ((n = parent.getLeftNode()) != nil)
-    #   puts n.printString
-    # else
-    #   puts "nil"
-    # end
-
-    # print "   right/no "
-    # if ((n = parent.getRightNode()) != nil)
-    #   puts n.printString
-    # else
-    #   puts "nil"
-    # end
 
     # splice the two new nodes into the tree
     
     if (parent.getYes() == lastAnimalNode)      # got here on a "yes"
       parent.setYes(newQuestionNode)
       newQuestionNode.setNo(lastAnimalNode)
-      #newQuestionNode.setUpNode(parent)
-      #lastAnimalNode.setUpNode(newQuestionNode)
       
     elsif (parent.getNo() == lastAnimalNode)  # got here on a "no"
       parent.setNo(newQuestionNode)
       newQuestionNode.setYes(lastAnimalNode)
-      #newQuestionNode.setUpNode(parent)
-      #lastAnimalNode.setUpNode(newQuestionNode)
       
     else
       put "shouldn't get here"
       exit
     end
-
-    newQuestionNode.setUpNode(parent)
-    lastAnimalNode.setUpNode(newQuestionNode)
-
     
     puts "tree AFTER updates"
     puts "------"
@@ -200,12 +146,9 @@ class NullNode
   def getText ; return self.printString() ; end
 end
 
-
-
 class BinaryNode
   
   def initialize (aString)
-    @up = nil
     @left = nil
     @right = nil
 
@@ -213,7 +156,6 @@ class BinaryNode
 
   def getLeftNode ; return @left ; end
   def getRightNode ; return @right ; end
-  def getUpNode ; return @up ; end
   def isNull ; return false ; end
 
   def getYes ; return self.getLeftNode() ; end
@@ -224,22 +166,14 @@ class BinaryNode
 
   def setLeftNode(aNode)
     @left = aNode
-    #aNode.setUpNode(self)
   end
 
   def setRightNode(aNode)
     @right = aNode
-    #aNode.setUpNode(self)
   end
-
-  def setUpNode(aNode)
-    @up = aNode
-  end
-
 
   attr_reader :left
   attr_reader :right
-  attr_reader :up  # parent node
 
   def getText ; return "BinaryNode:" ; end
   def printString ; return self.getText() ; end
@@ -251,13 +185,9 @@ class BinaryNode
     puts self.printString()
     if (self.getLeftNode())
       self.getLeftNode.recursePrintFromLevel(spaces+1)
-#    else
-#      puts "left == nil"
     end
     if (self.getRightNode())
       self.getRightNode.recursePrintFromLevel(spaces+1)
-#    else
-#      puts "right == nil"
     end
   end
   
@@ -330,7 +260,6 @@ end
 
 
 game = AnimalGame.new()
-#game.initialize_game()
 game.welcome()
 
 loop do
