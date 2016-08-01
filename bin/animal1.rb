@@ -60,14 +60,7 @@ _END_
       if (current_node.isLeaf())  # yea!  we're done!
         puts "I guessed correctly. I must be very smart."
       else
-        # aNode = current_node.getYes()
-        # if (!aNode)
-        #   puts "error - current_node = " + current_node.printString + ", yes node is nil"
-        #   exit
-        # end
-        
         self.play_game_from_node(current_node,current_node.getYes())
-
         
       end
     else  # player answered no to question
@@ -117,17 +110,17 @@ _END_
     end
 
     # splice the two new nodes into the tree
+
+    parent.replaceExistingNodeWith(lastAnimalNode,newQuestionNode)
     
-    if (parent.getYes() == lastAnimalNode)    # got here on a "yes"
-      parent.setYes(newQuestionNode)
-      
-    elsif (parent.getNo() == lastAnimalNode)  # got here on a "no"
-      parent.setNo(newQuestionNode)
-      
-    else
-      put "shouldn't get here"
-      exit
-    end
+    # if (parent.getYes() == lastAnimalNode) 
+    #   parent.setYes(newQuestionNode)      
+    # elsif (parent.getNo() == lastAnimalNode)
+    #   parent.setNo(newQuestionNode)      
+    # else
+    #   put "shouldn't get here"
+    #   exit
+    # end
     
     puts "tree AFTER updates"
     puts "------"
@@ -174,6 +167,18 @@ class BinaryNode
     @right = aNode
   end
 
+  def replaceExistingNodeWith(oldThing,newThing)
+    if (self.getYes() == oldThing)    # got here on a "yes"
+      self.setYes(newThing)
+      
+    elsif (self.getNo() == oldThing)  # got here on a "no"
+      self.setNo(newThing)
+    else
+      # probably should thrown an exception here
+    end
+  end
+
+  
   attr_reader :left
   attr_reader :right
 
@@ -232,10 +237,6 @@ class QuestionNode < BinaryNode
     end
     return q
   end
-
-#  def isLeaf
-#    return false
-#  end
 
   def printString
     return "QuestionNode: #{question}"
