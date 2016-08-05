@@ -30,106 +30,21 @@ _END_
     
   end
 
-  def play_game
+
+  def play_game_with_player(aPlayer)
     top = self.getTopNode()
-    self.play_game_from_node(top,top.getLeftNode())
+    aPlayer.play_game_from_node(top,top.getLeftNode())
     
   end
-
-  def promptForYesNo
-    loop do
-      print " > "
-      answer = gets
-      if (answer =~ /^\s*y/i)
-        return true
-      elsif (answer =~ /^\s*n/i)
-        return false
-      end
-      puts "please answer yes or no"
-    end
-  end
   
-  
-  def play_game_from_node(parent_node,current_node)  # recursive method
+  #def play_game
+  #  top = self.getTopNode()
+  #  self.play_game_from_node(top,top.getLeftNode())
+    
+  #end
 
-    # display the question at this node
-    puts current_node.getText()
+  
    
-    answeredYes = self.promptForYesNo()
-    if answeredYes
-      if (current_node.isLeaf())  # yea!  we're done!
-        puts "I guessed correctly. I must be very smart."
-      else
-        self.play_game_from_node(current_node,current_node.getYes())
-        
-      end
-    else  # player answered no to question
-      if (!current_node.isLeaf()) # not at a leaf means we're at a branch
-        self.play_game_from_node(current_node,current_node.getNo())
-        
-      else  # uh-oh.  got to the end of the questions and did not find the animal
-        self.get_new_question_for_node(parent_node,current_node)
-
-      end
-    end  
-      
-  end
-  
-  
-  def get_new_question_for_node(parent,lastAnimalNode)
-    # need to prompt for a new question and then edit the tree
-    # we'll end up with two new nodes, a question node and an animal node
-   
-    puts "I don't know what animal you're thinking of. Help me update my database."
-    print "Please type in the name of the animal > "
-
-    name = gets.chomp()  # delete newline
-    newAnimalNode = AnimalNode.new(name)
-    
-    print "You will need to type in a question that will distinguish between "
-    print lastAnimalNode.articleAndName()
-    print " and "
-    print newAnimalNode.articleAndName() + ".\n"
-    puts "The question should be TRUE for one animal and FALSE for the other."
-    puts "After you enter the question, I will ask for which animal the question is true."
-    print "> "
-
-    q = gets.chomp()
-    newQuestionNode = QuestionNode.new(q)
-
-    print "\nIs this question true for " + newAnimalNode.articleAndName() + "?"
-    
-    if (self.promptForYesNo())
-      # true means question is true for the new animal
-      newQuestionNode.setYes(newAnimalNode)
-      newQuestionNode.setNo(lastAnimalNode)  
-    else
-      # false means the question is true for the existing animal
-      newQuestionNode.setYes(lastAnimalNode)
-      newQuestionNode.setNo(newAnimalNode)
-    end
-
-    # splice the two new nodes into the tree
-
-    parent.replaceExistingNodeWith(lastAnimalNode,newQuestionNode)
-    
-    # if (parent.getYes() == lastAnimalNode) 
-    #   parent.setYes(newQuestionNode)      
-    # elsif (parent.getNo() == lastAnimalNode)
-    #   parent.setNo(newQuestionNode)      
-    # else
-    #   put "shouldn't get here"
-    #   exit
-    # end
-    
-    puts "tree AFTER updates"
-    puts "------"
-    self.getTopNode.recursePrint()
-    puts "------"
-    
-    
-  end
-  
 end
 
 class NullNode
@@ -283,17 +198,130 @@ class AnimalNode < BinaryNode
 end
 
 
+class Player
+  def play(game)
+    game.play_game_with_player(self)
+    
+  end
+
+
+  def play_game_from_node(parent_node,current_node)  # recursive method
+
+    # display the question at this node
+    puts current_node.getText()
+   
+    answeredYes = self.promptForYesNo()
+    if answeredYes
+      if (current_node.isLeaf())  # yea!  we're done!
+        puts "I guessed correctly. I must be very smart."
+      else
+        self.play_game_from_node(current_node,current_node.getYes())
+        
+      end
+    else  # player answered no to question
+      if (!current_node.isLeaf()) # not at a leaf means we're at a branch
+        self.play_game_from_node(current_node,current_node.getNo())
+        
+      else  # uh-oh.  got to the end of the questions and did not find the animal
+        self.get_new_question_for_node(parent_node,current_node)
+
+      end
+    end  
+      
+  end
+
+   
+  def get_new_question_for_node(parent,lastAnimalNode)
+    # need to prompt for a new question and then edit the tree
+    # we'll end up with two new nodes, a question node and an animal node
+   
+    puts "I don't know what animal you're thinking of. Help me update my database."
+    print "Please type in the name of the animal > "
+
+    name = gets.chomp()  # delete newline
+    newAnimalNode = AnimalNode.new(name)
+    
+    print "You will need to type in a question that will distinguish between "
+    print lastAnimalNode.articleAndName()
+    print " and "
+    print newAnimalNode.articleAndName() + ".\n"
+    puts "The question should be TRUE for one animal and FALSE for the other."
+    puts "After you enter the question, I will ask for which animal the question is true."
+    print "> "
+
+    q = gets.chomp()
+    newQuestionNode = QuestionNode.new(q)
+
+    print "\nIs this question true for " + newAnimalNode.articleAndName() + "?"
+    
+    if (self.promptForYesNo())
+      # true means question is true for the new animal
+      newQuestionNode.setYes(newAnimalNode)
+      newQuestionNode.setNo(lastAnimalNode)  
+    else
+      # false means the question is true for the existing animal
+      newQuestionNode.setYes(lastAnimalNode)
+      newQuestionNode.setNo(newAnimalNode)
+    end
+
+    # splice the two new nodes into the tree
+
+    parent.replaceExistingNodeWith(lastAnimalNode,newQuestionNode)
+    
+    # if (parent.getYes() == lastAnimalNode) 
+    #   parent.setYes(newQuestionNode)      
+    # elsif (parent.getNo() == lastAnimalNode)
+    #   parent.setNo(newQuestionNode)      
+    # else
+    #   put "shouldn't get here"
+    #   exit
+    # end
+    
+    #puts "tree AFTER updates"
+    #puts "------"
+    #self.getTopNode.recursePrint()
+    #puts "------"
+    
+    
+  end
+
+  
+  def promptForYesNo
+    loop do
+      print " > "
+      answer = gets
+      if (answer =~ /^\s*y/i)
+        return true
+      elsif (answer =~ /^\s*n/i)
+        return false
+      end
+      puts "please answer yes or no"
+    end
+  end
+  
+
+  
+
+end
+
+
+
+
 game = AnimalGame.new()
 game.welcome()
 
 loop do
-  game.play_game()
+  thePlayer = Player.new()
+  thePlayer.play(game)
+
+  puts "game state ----"
+  game.getTopNode.recursePrint()
+  puts "---------------"
   
   print "play again? > "
   ans = gets
   if (ans !~ /^y/i)
-    puts "exiting"
-    game.getTopNode.recursePrint()
+    puts "goodbye"
     exit
   end
 end
