@@ -17,18 +17,6 @@ class AnimalGame
 
   def getTopNode ; return @top_node ; end
 
-  def welcome
-    print <<_END_
-
-Welcome to the Animal Game.
-
-Think of an animal.  I will ask yes/no questions to try to guess the animal. 
-
-Please answer each question with a "y" or "n"
-    
-_END_
-    
-  end
 
 
   def play_game_with_player(aPlayer)
@@ -36,14 +24,6 @@ _END_
     aPlayer.play_game_from_node(top,top.getLeftNode())
     
   end
-  
-  #def play_game
-  #  top = self.getTopNode()
-  #  self.play_game_from_node(top,top.getLeftNode())
-    
-  #end
-
-  
    
 end
 
@@ -265,23 +245,7 @@ class Player
     end
 
     # splice the two new nodes into the tree
-
     parent.replaceExistingNodeWith(lastAnimalNode,newQuestionNode)
-    
-    # if (parent.getYes() == lastAnimalNode) 
-    #   parent.setYes(newQuestionNode)      
-    # elsif (parent.getNo() == lastAnimalNode)
-    #   parent.setNo(newQuestionNode)      
-    # else
-    #   put "shouldn't get here"
-    #   exit
-    # end
-    
-    #puts "tree AFTER updates"
-    #puts "------"
-    #self.getTopNode.recursePrint()
-    #puts "------"
-    
     
   end
 
@@ -305,10 +269,18 @@ class Player
 end
 
 
+print <<_END_
+
+Welcome to the Animal Game.
+
+Think of an animal.  I will ask yes/no questions to try to guess the animal. 
+
+Please answer each question with a "y" or "n"
+    
+_END_
 
 
 game = AnimalGame.new()
-game.welcome()
 
 loop do
   thePlayer = Player.new()
