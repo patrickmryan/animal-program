@@ -286,9 +286,9 @@ loop do
   thePlayer = Player.new()
   thePlayer.play(game)
 
-  puts "game state ----"
-  game.getTopNode.recursePrint()
-  puts "---------------"
+#  puts "game state ----"
+#  game.getTopNode.recursePrint()
+#  puts "---------------"
   
   print "play again? > "
   ans = gets
